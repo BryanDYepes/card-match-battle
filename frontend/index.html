@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Match Battle - Juego de Cartas</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Pantalla de Inicio -->
+    <div id="pantalla-inicio" class="pantalla activa">
+        <div class="contenedor-inicio">
+            <h1 class="titulo-principal">🎴 Card Match Battle</h1>
+            <p class="subtitulo">¡Demuestra tu estrategia y gana todas las cartas!</p>
+            
+            <div class="formulario-inicio">
+                <input type="text" id="input-nombre" placeholder="Ingresa tu nombre" maxlength="20" required>
+                
+                <div class="selector-categoria">
+                    <label for="select-categoria">Categoría:</label>
+                    <select id="select-categoria">
+                        <option value="pokemon">🐾 Pokémon</option>
+                        <option value="animales">🦁 Animales</option>
+                        <option value="planetas">🪐 Planetas</option>
+                        <option value="superheroes">🦸 Superhéroes</option>
+                    </select>
+                </div>
+
+                <button id="btn-crear-partida" class="btn btn-primary">Crear Partida</button>
+                
+                <div class="separador">
+                    <span>o</span>
+                </div>
+
+                <input type="text" id="input-codigo" placeholder="Código de partida" maxlength="6">
+                <button id="btn-unirse-partida" class="btn btn-secondary">Unirse a Partida</button>
+            </div>
+
+            <div class="reglas-rapidas">
+                <h3>📜 Reglas Rápidas</h3>
+                <ul>
+                    <li>De 2 a 7 jugadores</li>
+                    <li>Compara características de tus cartas</li>
+                    <li>Gana quien acumule más cartas</li>
+                    <li>¡30 minutos de pura estrategia!</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla de Sala de Espera -->
+    <div id="pantalla-espera" class="pantalla">
+        <div class="contenedor-espera">
+            <h2>🎮 Sala de Espera</h2>
+            
+            <div class="codigo-partida">
+                <p>Código de la partida:</p>
+                <h1 id="codigo-mostrar" class="codigo-grande">------</h1>
+                <button id="btn-copiar-codigo" class="btn-icon" title="Copiar código">📋</button>
+            </div>
+
+            <div class="jugadores-conectados">
+                <h3>Jugadores Conectados (<span id="contador-jugadores">0</span>/7)</h3>
+                <div id="lista-jugadores" class="lista-jugadores"></div>
+            </div>
+
+            <div class="acciones-espera">
+                <button id="btn-iniciar-juego" class="btn btn-primary" disabled>Iniciar Juego (mín. 2 jugadores)</button>
+                <button id="btn-cancelar-partida" class="btn btn-danger">Cancelar</button>
+            </div>
+
+            <p class="info-espera">💡 Comparte el código con tus amigos para que se unan</p>
+            <p class="info-espera">⚡ Con 7 jugadores, la partida iniciará automáticamente</p>
+        </div>
+    </div>
+
+    <!-- Pantalla de Juego -->
+    <div id="pantalla-juego" class="pantalla">
+        <div class="contenedor-juego">
+            <!-- Header del Juego -->
+            <div class="header-juego">
+                <div class="info-partida">
+                    <span>Ronda: <strong id="ronda-actual">1</strong></span>
+                    <span>Código: <strong id="codigo-juego">------</strong></span>
+                    <span>⏱️ <span id="tiempo-transcurrido">00:00</span></span>
+                </div>
+                <button id="btn-salir-juego" class="btn-icon" title="Salir">🚪</button>
+            </div>
+
+            <!-- Panel de Jugadores -->
+            <div class="panel-jugadores">
+                <div id="lista-jugadores-juego" class="jugadores-grid"></div>
+            </div>
+
+            <!-- Área de Juego Central -->
+            <div class="area-juego">
+                <div class="turno-actual">
+                    <h3 id="mensaje-turno">Esperando turno...</h3>
+                </div>
+
+                <!-- Carta del Jugador -->
+                <div class="contenedor-carta-jugador">
+                    <div id="carta-jugador" class="carta">
+                        <div class="carta-placeholder">
+                            <p>Tu carta aparecerá aquí</p>
+                        </div>
+                    </div>
+                    <div class="info-cartas-jugador">
+                        <p>Cartas en tu poder: <strong id="cartas-totales-jugador">0</strong></p>
+                    </div>
+                </div>
+
+                <!-- Selección de Característica -->
+                <div id="selector-caracteristicas" class="selector-caracteristicas oculto">
+                    <h3>Selecciona una característica:</h3>
+                    <div id="botones-caracteristicas" class="botones-caracteristicas"></div>
+                </div>
+
+                <!-- Botón Jugar Ronda -->
+                <div class="acciones-juego">
+                    <button id="btn-jugar-ronda" class="btn btn-primary btn-grande oculto">¡Jugar Ronda!</button>
+                </div>
+
+                <!-- Resultado de Ronda -->
+                <div id="resultado-ronda" class="resultado-ronda oculto">
+                    <div class="resultado-contenido">
+                        <h2 id="resultado-titulo"></h2>
+                        <p id="resultado-descripcion"></p>
+                        <button id="btn-continuar" class="btn btn-primary">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cartas Acumuladas por Empate -->
+            <div id="cartas-empate" class="cartas-empate oculto">
+                <p>🎴 Cartas acumuladas por empate: <strong id="contador-empate">0</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla de Final -->
+    <div id="pantalla-final" class="pantalla">
+        <div class="contenedor-final">
+            <div class="resultado-final">
+                <h1 id="titulo-final">🏆 ¡Fin del Juego!</h1>
+                <div id="ganador-info" class="ganador-info"></div>
+                
+                <div class="estadisticas-finales">
+                    <h3>📊 Resultados Finales</h3>
+                    <div id="tabla-resultados" class="tabla-resultados"></div>
+                </div>
+
+                <div class="acciones-final">
+                    <button id="btn-nueva-partida" class="btn btn-primary">Nueva Partida</button>
+                    <button id="btn-volver-inicio" class="btn btn-secondary">Volver al Inicio</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificaciones Toast -->
+    <div id="notificaciones" class="notificaciones"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loading" class="loading-overlay oculto">
+        <div class="spinner"></div>
+        <p>Cargando...</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/socket.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
