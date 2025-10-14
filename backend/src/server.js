@@ -41,8 +41,10 @@ new SocketController(io);
 
 // Iniciar servidor
 const PORT = process.env.PORT || 3000;
+
 server.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+  const url = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
+  console.log(`🚀 Servidor corriendo en ${url}`);
   console.log(`🎮 Card Match Battle iniciado correctamente`);
 });
 

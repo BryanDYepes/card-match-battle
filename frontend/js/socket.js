@@ -5,9 +5,13 @@ const SocketManager = {
 
     // Inicializar conexión
     inicializar() {
-        const host = window.location.hostname;
-        const port = window.location.port || 3000;
-        const url = `http://${host}:${port}`;
+        // Detectar entorno automáticamente
+        // Si está en Render (https), usará wss://
+        // Si está en local, usará http://localhost:3000
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const url = isLocal
+            ? 'http://localhost:3000'
+            : window.location.origin; // Render: https://card-match-battle.onrender.com
 
         this.socket = io(url, {
             transports: ['websocket', 'polling'],
@@ -39,39 +43,17 @@ const SocketManager = {
             UI.ocultarLoading();
         });
 
-        // Eventos de partida
-        this.socket.on('partida_creada', (data) => {
-            Game.manejarPartidaCreada(data);
-        });
+        // Eventos del juego
+        this.socket.on('partida_creada', (data) => Game.manejarPartidaCreada(data));
+        this.socket.on('partida_unida', (data) => Game.manejarPartidaUnida(data));
+        this.socket.on('jugador_unido', (data) => Game.manejarJugadorUnido(data));
+        this.socket.on('partida_iniciada', (data) => Game.manejarPartidaIniciada(data));
+        this.socket.on('caracteristica_seleccionada', (data) => Game.manejarCaracteristicaSeleccionada(data));
+        this.socket.on('ronda_jugada', (data) => Game.manejarRondaJugada(data));
+        this.socket.on('jugador_desconectado', (data) => Game.manejarJugadorDesconectado(data));
+        this.socket.on('partida_finalizada', (data) => Game.manejarPartidaFinalizada(data));
 
-        this.socket.on('partida_unida', (data) => {
-            Game.manejarPartidaUnida(data);
-        });
-
-        this.socket.on('jugador_unido', (data) => {
-            Game.manejarJugadorUnido(data);
-        });
-
-        this.socket.on('partida_iniciada', (data) => {
-            Game.manejarPartidaIniciada(data);
-        });
-
-        this.socket.on('caracteristica_seleccionada', (data) => {
-            Game.manejarCaracteristicaSeleccionada(data);
-        });
-
-        this.socket.on('ronda_jugada', (data) => {
-            Game.manejarRondaJugada(data);
-        });
-
-        this.socket.on('jugador_desconectado', (data) => {
-            Game.manejarJugadorDesconectado(data);
-        });
-
-        this.socket.on('partida_finalizada', (data) => {
-            Game.manejarPartidaFinalizada(data);
-        });
-
+        // Manejo de errores
         this.socket.on('error', (data) => {
             UI.mostrarNotificacion(data.mensaje, 'error');
         });
@@ -82,7 +64,7 @@ const SocketManager = {
         });
     },
 
-    // Emitir eventos
+    // Emitir eventos genéricos
     emit(evento, data) {
         if (!this.conectado) {
             UI.mostrarNotificacion('No hay conexión con el servidor', 'error');
